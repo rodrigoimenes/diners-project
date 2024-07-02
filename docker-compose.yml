@@ -1,0 +1,29 @@
+version: "3"
+services:
+  apollo-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - database
+    environment:
+      PORT: 4000
+      DATABASE_URL: "postgresql://user:supersecret@database:5432/diners?schema=public"
+    links:
+      - database
+
+  database:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    volumes:
+      - data:/data/db
+    environment:
+      POSTGRES_DB: diners
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: supersecret
+
+volumes:
+  data: {}
