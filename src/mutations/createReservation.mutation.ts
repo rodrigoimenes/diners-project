@@ -3,6 +3,7 @@ import { CreateReservationInput } from "../inputs/createReservation.input";
 import { Reservation } from "../schemas/reservation.schema";
 import { ApolloError } from "apollo-server";
 import prisma from "../lib/prisma";
+import { RESERVATION_TIME } from "../lib/constants";
 
 export async function createReservation(
   data: CreateReservationInput
@@ -39,8 +40,8 @@ export async function createReservation(
           reservations: {
             where: {
               start: {
-                gte: new Date(reservationTime.getTime() - 2 * 60 * 60 * 1000),
-                lte: new Date(reservationTime.getTime() + 2 * 60 * 60 * 1000),
+                gte: new Date(reservationTime.getTime() - RESERVATION_TIME),
+                lte: new Date(reservationTime.getTime() + RESERVATION_TIME),
               },
             },
           },
@@ -50,7 +51,10 @@ export async function createReservation(
   });
 
   if (!restaurant) {
-    throw new ApolloError("Restaurant not found", "404");
+    throw new ApolloError(
+      "Restaurant does not have this time available",
+      "404"
+    );
   }
 
   // Check if there is an available table for the group size
@@ -67,7 +71,7 @@ export async function createReservation(
   const reservation = await prisma.reservation.create({
     data: {
       start: reservationTime,
-      end: new Date(reservationTime.getTime() + 2 * 60 * 60 * 1000),
+      end: new Date(reservationTime.getTime() + RESERVATION_TIME),
       table: {
         connect: { id: table.id },
       },

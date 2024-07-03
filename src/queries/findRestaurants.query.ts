@@ -3,6 +3,7 @@ import { Restaurant } from "../schemas/restaurant.schema";
 import { FindRestaurantsInput } from "../inputs/findRestaurants.input";
 import { ApolloError } from "apollo-server";
 import prisma from "../lib/prisma";
+import { RESERVATION_TIME } from "../lib/constants";
 
 export async function findRestaurants(
   input: FindRestaurantsInput
@@ -56,7 +57,7 @@ export async function findRestaurants(
             none: {
               start: {
                 gte: reservationTime,
-                lt: new Date(reservationTime.getTime() + 2 * 60 * 60 * 1000),
+                lt: new Date(reservationTime.getTime() + RESERVATION_TIME),
               },
             },
           },
@@ -72,5 +73,5 @@ export async function findRestaurants(
   return availableRestaurants.map((restaurant) => ({
     id: restaurant.id,
     name: restaurant.name,
-  })) as Restaurant[];
+  }));
 }

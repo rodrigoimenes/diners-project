@@ -73,7 +73,7 @@ describe("findRestaurants", () => {
     try {
       await createReservation({ eaterIds, reservationTime, restaurantId });
     } catch (e) {
-      expect(e.message).toBe("Restaurant not found");
+      expect(e.message).toBe("Restaurant does not have this time available");
     }
   });
 
