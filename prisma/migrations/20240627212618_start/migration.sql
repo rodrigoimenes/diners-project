@@ -41,6 +41,11 @@ CREATE TABLE "Reservation" (
     CONSTRAINT "Reservation_pkey" PRIMARY KEY ("id")
 );
 
+-- UGLY, I KNOW!
+-- If it were in production I would force the name anyway
+-- THIS LINK CONTAINS THE EXPLANATION FOR THAT
+-- https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations#implicit-many-to-many-relations:~:text=We%20recommend%20using%20implicit%20m%2Dn%2Drelations%2C%20where%20Prisma%20ORM%20automatically%20generates%20the%20relation%20table%20in%20the%20underlying%20database.%20Explicit%20m%2Dn%2Drelations%20should%20be%20used%20when%20you%20need%20to%20store%20additional%20data%20in%20the%20relations%2C%20such%20as%20the%20date%20the%20relation%20was%20created.
+
 -- CreateTable
 CREATE TABLE "_EaterToEndorsement" (
     "A" INTEGER NOT NULL,

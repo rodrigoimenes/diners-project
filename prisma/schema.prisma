@@ -11,39 +11,39 @@ datasource db {
 }
 
 model Eater {
-  id                   Int                @id @default(autoincrement())
-  name                 String
+  id           Int           @id @default(autoincrement())
+  name         String
   endorsements Endorsement[]
-  reservations         Reservation[]
+  reservations Reservation[]
 }
 
 model Restaurant {
-  id           Int            @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   name         String
   endorsements Endorsement[]
   tables       Table[]
 }
 
 model Endorsement {
-  id           Int           @id @default(autoincrement())
-  name         String
-  restaurants  Restaurant[]
-  eaters Eater[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  restaurants Restaurant[]
+  eaters      Eater[]
 }
 
 model Table {
   id           Int           @id @default(autoincrement())
   capacity     Int
   restaurantId Int
-  restaurant   Restaurant     @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id])
   reservations Reservation[]
 }
 
 model Reservation {
-  id           Int        @id @default(autoincrement())
-  tableId      Int
-  table        Table      @relation(fields: [tableId], references: [id])
-  eaters       Eater[]
-  start         DateTime
-  end         DateTime
+  id      Int      @id @default(autoincrement())
+  tableId Int
+  table   Table    @relation(fields: [tableId], references: [id])
+  eaters  Eater[]
+  start   DateTime
+  end     DateTime
 }

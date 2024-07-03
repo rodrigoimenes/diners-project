@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "export $(cat .env | xargs) && yarn jest --watch --runInBand --coverage",
+    "test": "export $(cat .env | xargs) && yarn jest --watchAll --runInBand --coverage",
     "start": "ts-node-dev --no-notify --respawn --transpile-only src/index.ts",
     "start:prod": "node dist/index",
     "start:migrate:prod": "prisma migrate deploy && npm run start:prod",
