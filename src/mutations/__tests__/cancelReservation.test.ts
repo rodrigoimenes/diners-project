@@ -1,7 +1,7 @@
 import PrismaClient from "../../lib/prisma";
 import { cancelReservation } from "../cancelReservation.mutation";
 
-describe("findRestaurants", () => {
+describe("cancelReservation", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

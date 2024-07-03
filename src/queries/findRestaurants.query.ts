@@ -25,7 +25,7 @@ export async function findRestaurants(
     include: {
       endorsements: {
         select: {
-          name: true,
+          id: true,
         },
       },
     },
@@ -35,23 +35,14 @@ export async function findRestaurants(
     throw new ApolloError("One or more eater(s) were not found", "404");
   }
 
-  const endorsements = new Set(
-    eaters.flatMap((eater) => eater.endorsements.map((dr) => dr.name))
+  const endorsements = Array.from(
+    new Set(eaters.flatMap((eater) => eater.endorsements.map((dr) => dr.id)))
   );
 
   const restaurants = await prisma.restaurant.findMany({
     where: {
-      AND: Array.from(endorsements).map((restriction) => ({
-        endorsements: {
-          some: {
-            name: restriction,
-          },
-        },
-      })),
-    },
-    include: {
       tables: {
-        where: {
+        some: {
           capacity: { gte: groupSize },
           reservations: {
             none: {
@@ -64,13 +55,23 @@ export async function findRestaurants(
         },
       },
     },
+    include: {
+      tables: true,
+      endorsements: true,
+    },
   });
 
   const availableRestaurants = restaurants.filter(
     (restaurant) => restaurant.tables.length > 0
   );
 
-  return availableRestaurants.map((restaurant) => ({
+  // Filter out restaurants that don't have all the required endorsements
+  const filteredRestaurants = availableRestaurants.filter((restaurant) => {
+    const restaurantEndorsements = restaurant.endorsements.map((e) => e.id);
+    return endorsements.every((id) => restaurantEndorsements.includes(id));
+  });
+
+  return filteredRestaurants.map((restaurant) => ({
     id: restaurant.id,
     name: restaurant.name,
   }));
