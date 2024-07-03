@@ -22,6 +22,29 @@ export async function createReservation(
     );
   }
 
+  const conflictingReservations = await prisma.reservation.findMany({
+    where: {
+      eaters: {
+        some: {
+          id: {
+            in: eaterIds,
+          },
+        },
+      },
+      start: {
+        gte: new Date(new Date(time).getTime() - RESERVATION_TIME),
+        lte: new Date(new Date(time).getTime() + RESERVATION_TIME),
+      },
+    },
+  });
+
+  if (conflictingReservations.length > 0) {
+    throw new ApolloError(
+      "One or more eaters already have a reservation at the specified time!",
+      "409"
+    );
+  }
+
   // Check if all eaters exist
   const eaters = await prisma.eater.findMany({
     where: { id: { in: eaterIds } },

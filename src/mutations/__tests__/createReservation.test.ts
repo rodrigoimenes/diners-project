@@ -30,6 +30,10 @@ describe("createReservation", () => {
         id: 999,
       });
 
+    (PrismaClient.reservation.findMany as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue([]);
+
     const result = await createReservation({
       eaterIds,
       reservationTime,
@@ -112,6 +116,24 @@ describe("createReservation", () => {
     } catch (e) {
       expect(e.message).toBe(
         "The reservation time must be at least 10 minutes in the future"
+      );
+    }
+  });
+
+  it("should throw an error if eater has already created a reservation in that time", async () => {
+    const eaterIds = [1, 2, 3];
+    const reservationTime = new Date(Date.now() + 12 * 60 * 1000); // 5 minutes in the future
+    const restaurantId = 1;
+
+    (PrismaClient.reservation.findMany as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue([{ id: 1 }]);
+
+    try {
+      await createReservation({ eaterIds, reservationTime, restaurantId });
+    } catch (e) {
+      expect(e.message).toBe(
+        "One or more eaters already have a reservation at the specified time!"
       );
     }
   });
